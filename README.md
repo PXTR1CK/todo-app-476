@@ -61,29 +61,27 @@ This project is developed as part of **CP476 – Web Development** and is built 
 
 Roles may rotate in later milestones.
 
-How to Run TaskFlow Locally
-Prerequisites
+
+# How to Run TaskFlow Locally
+
+## Prerequisites
 
 Before running the project, ensure you have:
 
-Node.js (v18+ recommended)
+- **Node.js** (v18+ recommended)
+- **MySQL Server** installed and running
+- **MySQL Workbench**
 
-MySQL Server installed and running
+##  1. Database Setup
 
-MySQL Workbench (for database setup)
+1. Open **MySQL Workbench**
+2. Connect to your local MySQL instance
+3. Run:
 
-1. Database Setup
-
-Open MySQL Workbench
-
-Connect to your local MySQL instance
-
-Run the following:
-
+```sql
 CREATE DATABASE taskflow;
 USE taskflow;
 
-Create tables:
 
 CREATE TABLE Users (
   user_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -107,31 +105,14 @@ CREATE TABLE Tasks (
     FOREIGN KEY (user_id) REFERENCES Users(user_id)
     ON DELETE CASCADE
 );
-
-2. Backend Setup
-
-Navigate to backend folder:
-
+```
+##  2. Backend Setup
+```bash
 cd backend
-
-Install dependencies:
-
 npm install
-
-Create a .env file inside the backend folder:
-
-PORT=3001
-DB_HOST=127.0.0.1
-DB_USER=root
-DB_PASSWORD=YOUR_PASSWORD
-DB_NAME=taskflow
-DB_PORT=3306
-
-Start the backend server:
-
 node src/server.js
-
-Backend will run at:
+```
+Backend runs at:
 
 http://localhost:3001
 
@@ -139,41 +120,27 @@ Test endpoint:
 
 http://localhost:3001/api/health
 
-3. Frontend Setup
-
-Open a new terminal window.
-
-Navigate to frontend folder:
-
+##  3. Frontend Setup
+```bash
 cd frontend
-
-Install dependencies:
-
 npm install
-
-Start the development server:
-
 npm run dev
-
-Frontend will run at:
-
-http://localhost:3000
-
-4. Running the Full Application
-
-Ensure MySQL server is running.
-
-Start backend (node src/server.js)
-
-Start frontend (npm run dev)
-
-Open browser at:
+```
+Frontend runs at:
 
 http://localhost:3000
 
-Project Structure
+##  4. Running the full application
+1. Ensure MySQL is running
+2. Start backend
+3. Start frontend
+4. Open: http://localhost:3000
+
+##  Project Structure
+```code
 todo-app-476/
-│
-├── frontend/   (Next.js UI)
-├── backend/    (Node.js + Express API)
-└── database/   (MySQL schema)
+├── frontend/   # Next.js UI
+├── backend/    # Node.js + Express API
+└── database/   # MySQL schema
+```
+
