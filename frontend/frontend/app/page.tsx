@@ -184,6 +184,7 @@ export default function Home() {
                     className="h-11 w-full shadow-sm hover:shadow transition-shadow"
                   >
                     Sign in
+                    <Link href="/tasks">Sign in</Link>
                   </Button>
 
                   <div className="relative py-2">

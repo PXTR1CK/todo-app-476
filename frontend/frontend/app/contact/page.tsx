@@ -1,169 +1,81 @@
-"use client";
-
-import * as React from "react";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Mail, MessageSquare, UserRound, ArrowLeft } from "lucide-react";
+import { ArrowLeft, Mail, MessageSquare, UserRound } from "lucide-react";
 
 export default function ContactPage() {
-  const [subject, setSubject] = React.useState<string>("");
-
   return (
-    <main className="relative min-h-screen bg-background">
-      {/* subtle ambient background (theme-safe) */}
-      <div className="pointer-events-none absolute inset-0">
-        <div className="absolute -top-32 left-1/2 h-[26rem] w-[26rem] -translate-x-1/2 rounded-full bg-primary/15 blur-3xl" />
-        <div className="absolute -bottom-40 right-0 h-[28rem] w-[28rem] rounded-full bg-secondary/25 blur-3xl" />
-        <div className="absolute inset-0 [background-image:radial-gradient(circle_at_1px_1px,hsl(var(--border))_1px,transparent_0)] [background-size:28px_28px] opacity-40" />
-      </div>
-
-      <div className="relative mx-auto w-full max-w-5xl px-4 py-10 md:py-14">
-        {/* Back */}
-        <div className="mb-6">
-          <Link
-            href="/"
-            className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
-          >
+    <main className="min-h-screen bg-[#f3f4f6]">
+      <header className="border-b border-slate-200 bg-white">
+        <div className="mx-auto flex h-16 w-full max-w-[1120px] items-center px-4">
+          <Link href="/" className="inline-flex items-center gap-2 text-lg text-[#245eea]">
             <ArrowLeft className="h-4 w-4" />
             Back to Home
           </Link>
         </div>
+      </header>
 
-        {/* Header */}
-        <header className="text-center mb-12">
-          <h1 className="text-3xl font-semibold tracking-tight md:text-4xl">
-            Contact Support
-          </h1>
-          <p className="mt-2 text-sm text-muted-foreground md:text-base">
-            Need help with your account, have questions, or want to request
-            account deletion? We&apos;re here to help.
-          </p>
-        </header>
+      <section className="mx-auto max-w-[1120px] px-4 py-10">
+        <h1 className="text-center text-6xl font-bold text-slate-900">Contact Support</h1>
+        <p className="mt-3 text-center text-xl text-slate-500">
+          Need help with your account, have questions, or want to request account deletion? We&apos;re here to help.
+        </p>
 
+        <div className="mx-auto mt-10 grid max-w-[860px] grid-cols-3 gap-4">
+          <SupportCard icon={<Mail className="h-6 w-6" />} title="Email Support" subtitle="support@taskflow.com" />
+          <SupportCard icon={<MessageSquare className="h-6 w-6" />} title="Live Chat" subtitle="Available 9am - 5pm EST" />
+          <SupportCard icon={<UserRound className="h-6 w-6" />} title="Account Management" subtitle="Updates & deletions" />
+        </div>
 
-        {/* Form card */}
-        <section className="flex justify-center">
-          <Card className="w-1/3 border-border bg-card/70 backdrop-blur-xl shadow-lg">
-            <CardHeader className="pb-4">
-              <CardTitle className="text-xl">Send us a message</CardTitle>
-              <CardDescription>
-                We typically respond within 24–48 hours.
-              </CardDescription>
-            </CardHeader>
+        <div className="mx-auto mt-10 max-w-[860px] rounded-xl border border-slate-200 bg-white p-6">
+          <h2 className="text-5xl font-bold text-slate-900">Send us a message</h2>
 
-            <CardContent>
-              <form
-                className="space-y-5"
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  // TODO: call backend endpoint
-                  // fetch(`${process.env.NEXT_PUBLIC_API_BASE}/api/support`, ...)
-                }}
-              >
-                {/* Name + Email */}
-                  <div className="space-y-2">
-                    <Label htmlFor="name">Name</Label>
-                    <Input id="name" placeholder="Your name" className="h-11" />
-                  </div>
+          <form className="mt-6 space-y-5">
+            <div className="grid grid-cols-2 gap-4">
+              <Field label="Name" id="name" placeholder="Your name" />
+              <Field label="Email" id="email" placeholder="your.email@example.com" type="email" />
+            </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="email">Email</Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      placeholder="your.email@example.com"
-                      autoComplete="email"
-                      className="h-11"
-                    />
-                  </div>
+            <div>
+              <label htmlFor="subject" className="mb-2 block text-base font-semibold text-slate-700">Subject</label>
+              <select id="subject" className="h-12 w-full rounded-lg border border-slate-300 px-3 text-slate-600">
+                <option>Select a subject</option>
+                <option>General question</option>
+                <option>Account management</option>
+                <option>Account deletion</option>
+              </select>
+            </div>
 
+            <div>
+              <label htmlFor="message" className="mb-2 block text-base font-semibold text-slate-700">Message</label>
+              <textarea id="message" placeholder="Please describe your issue or question in detail..." className="h-40 w-full rounded-lg border border-slate-300 px-3 py-2" />
+            </div>
 
-                {/* Subject */}
-                <div className="space-y-2">
-                  <Label>Subject</Label>
-                  <Select value={subject} onValueChange={setSubject}>
-                    <SelectTrigger className="h-11">
-                      <SelectValue placeholder="Select a subject" />
-                    </SelectTrigger>
-                    <SelectContent className="">
-                      <SelectItem value="general">General question</SelectItem>
-                      <SelectItem value="billing">Billing</SelectItem>
-                      <SelectItem value="bug">Bug report</SelectItem>
-                      <SelectItem value="feature">Feature request</SelectItem>
-                      <SelectItem value="account">Account management</SelectItem>
-                      <SelectItem value="deletion">Account deletion</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+            <div className="rounded-lg border border-blue-200 bg-blue-50 p-4 text-base text-blue-700">
+              <span className="font-semibold">Note:</span> For account deletion requests, please include your registered email address in the message. We typically respond within 24-48 hours.
+            </div>
 
-                {/* Message */}
-                <div className="space-y-2">
-                  <Label htmlFor="message">Message</Label>
-                  <Textarea
-                    id="message"
-                    placeholder="Please describe your issue or question in detail..."
-                    className="min-h-[140px] resize-none"
-                  />
-                </div>
-
-                {/* Note box */}
-                <div className="rounded-xl border border-primary/20 bg-primary/10 px-4 py-3 text-xs text-muted-foreground">
-                  <span className="font-medium text-foreground">Note:</span> For
-                  account deletion requests, please include your registered
-                  email address in the message.
-                </div>
-
-                {/* Submit */}
-                <Button
-                  type="submit"
-                  className="h-11 w-full shadow-sm hover:shadow transition-shadow"
-                >
-                  Send Message
-                </Button>
-              </form>
-            </CardContent>
-          </Card>
-        </section>
-      </div>
+            <button type="submit" className="h-12 w-full rounded-lg bg-[#245eea] text-xl font-semibold text-white">Send Message</button>
+          </form>
+        </div>
+      </section>
     </main>
   );
 }
 
-function SupportCard({
-  icon,
-  title,
-  desc,
-}: {
-  icon: React.ReactNode;
-  title: string;
-  desc: string;
-}) {
+function Field({ label, id, placeholder, type = "text" }: { label: string; id: string; placeholder: string; type?: string }) {
   return (
-    <Card className="border-border bg-card/70 backdrop-blur-xl shadow-sm transition hover:shadow-md">
-      <CardContent className="flex flex-col items-center justify-center p-6 text-center">
-        <div className="mb-3 inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-primary/10 text-primary ring-1 ring-primary/15">
-          {icon}
-        </div>
-        <div className="font-semibold">{title}</div>
-        <div className="mt-1 text-sm text-muted-foreground">{desc}</div>
-      </CardContent>
-    </Card>
+    <div>
+      <label htmlFor={id} className="mb-2 block text-base font-semibold text-slate-700">{label}</label>
+      <input id={id} type={type} placeholder={placeholder} className="h-12 w-full rounded-lg border border-slate-300 px-3" />
+    </div>
+  );
+}
+
+function SupportCard({ icon, title, subtitle }: { icon: React.ReactNode; title: string; subtitle: string }) {
+  return (
+    <div className="rounded-xl border border-slate-200 bg-white p-6 text-center">
+      <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-blue-100 text-[#245eea]">{icon}</div>
+      <div className="text-2xl font-semibold text-slate-900">{title}</div>
+      <div className="mt-2 text-base text-slate-500">{subtitle}</div>
+    </div>
   );
 }
