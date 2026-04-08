@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -14,44 +15,75 @@ import { Label } from "@/components/ui/label";
 import { CheckCircle2, Zap, Shield, BarChart3, ArrowRight } from "lucide-react";
 import * as React from "react";
 
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3001/api";
+
 export default function Home() {
+  const router = useRouter();
+
+  const [email, setEmail] = React.useState("");
+  const [password, setPassword] = React.useState("");
+  const [error, setError] = React.useState("");
+  const [submitting, setSubmitting] = React.useState(false);
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setError("");
+    setSubmitting(true);
+
+    try {
+      const res = await fetch(`${API_BASE}/auth/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          password,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || "Login failed.");
+      }
+
+      localStorage.setItem("taskflow_user", JSON.stringify(data.user));
+      router.push("/tasks");
+      router.refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Something went wrong.");
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
   return (
     <main className="relative min-h-screen overflow-hidden bg-background">
-
       <div className="relative grid min-h-screen lg:grid-cols-2">
-        {/* Left marketing panel */}
         <section className="relative hidden lg:flex flex-col justify-between p-10">
           <div className="absolute inset-6 rounded-3xl border border-border bg-card backdrop-blur-xl shadow-sm" />
           <div className="pointer-events-none absolute inset-6 rounded-3xl bg-primary/10" />
 
           <div className="relative flex flex-col gap-10 p-6">
-            {/* Brand */}
             <div className="flex items-center gap-3">
               <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-sm ring-1 ring-primary/20">
                 <CheckCircle2 className="h-5 w-5" />
               </span>
               <div className="leading-tight">
-                <div className="text-sm font-medium text-muted-foreground">
-                  Welcome to
-                </div>
-                <div className="text-lg font-semibold tracking-tight">
-                  TaskFlow
-                </div>
+                <div className="text-sm font-medium text-muted-foreground">Welcome to</div>
+                <div className="text-lg font-semibold tracking-tight">TaskFlow</div>
               </div>
             </div>
 
-            {/* Headline */}
             <div className="max-w-md">
               <h1 className="text-4xl font-bold tracking-tight">
-                Manage work.{" "}
-                <span className="text-primary">Ship faster.</span>
+                Manage work. <span className="text-primary">Ship faster.</span>
               </h1>
               <p className="mt-4 text-base text-muted-foreground">
-                A clean, focused workspace to organize tasks, keep momentum, and
-                hit deadlines without the chaos.
+                A clean, focused workspace to organize tasks, keep momentum, and hit deadlines without the chaos.
               </p>
 
-              {/* Features */}
               <div className="mt-10 space-y-4">
                 <Feature
                   icon={<Zap className="h-5 w-5" />}
@@ -70,7 +102,6 @@ export default function Home() {
                 />
               </div>
 
-              {/* Social proof / mini stats */}
               <div className="mt-10 grid grid-cols-3 gap-3">
                 <Stat label="Teams" value="120+" />
                 <Stat label="Tasks/day" value="8.4k" />
@@ -79,11 +110,9 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Footer CTA */}
           <div className="relative flex items-end justify-between gap-6 p-6 pt-0">
             <p className="max-w-sm text-xs text-muted-foreground">
-              Need help with your account? Reach out for support with access,
-              deletions, and general questions.
+              Need help with your account? Reach out for support with access, deletions, and general questions.
             </p>
 
             <Button
@@ -95,14 +124,11 @@ export default function Home() {
                 Contact Support <ArrowRight className="h-4 w-4" />
               </Link>
             </Button>
-
           </div>
         </section>
 
-        {/* Right login panel */}
         <section className="relative flex items-center justify-center p-6 lg:p-10">
           <div className="w-full max-w-md">
-            {/* Header text (mobile) */}
             <div className="mb-6 lg:hidden">
               <div className="flex items-center gap-3">
                 <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-sm ring-1 ring-primary/20">
@@ -110,37 +136,28 @@ export default function Home() {
                 </span>
                 <div>
                   <div className="text-sm text-muted-foreground">Welcome to</div>
-                  <div className="text-lg font-semibold tracking-tight">
-                    TaskFlow
-                  </div>
+                  <div className="text-lg font-semibold tracking-tight">TaskFlow</div>
                 </div>
               </div>
-              <p className="mt-3 text-sm text-muted-foreground">
-                Sign in to continue.
-              </p>
+              <p className="mt-3 text-sm text-muted-foreground">Sign in to continue.</p>
             </div>
 
             <Card className="relative overflow-hidden border-border bg-card/70 backdrop-blur-xl shadow-lg">
-              {/* subtle top highlight */}
               <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-background" />
 
               <CardHeader className="relative">
-                <CardTitle className="text-2xl tracking-tight">
-                  Welcome back
-                </CardTitle>
-                <CardDescription>
-                  Sign in to continue to your account
-                </CardDescription>
+                <CardTitle className="text-2xl tracking-tight">Welcome back</CardTitle>
+                <CardDescription>Sign in to continue to your account</CardDescription>
               </CardHeader>
 
               <CardContent className="relative">
-                <form
-                  className="space-y-5"
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    // TODO: call PHP backend login endpoint
-                  }}
-                >
+                <form className="space-y-5" onSubmit={handleSubmit}>
+                  {error && (
+                    <div className="rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+                      {error}
+                    </div>
+                  )}
+
                   <div className="space-y-2">
                     <Label htmlFor="email">Email address</Label>
                     <Input
@@ -149,6 +166,8 @@ export default function Home() {
                       placeholder="you@example.com"
                       autoComplete="email"
                       className="h-11"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
                     />
                   </div>
 
@@ -168,14 +187,17 @@ export default function Home() {
                       placeholder="Enter your password"
                       autoComplete="current-password"
                       className="h-11"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
                     />
                   </div>
 
                   <Button
-                    asChild
+                    type="submit"
                     className="h-11 w-full shadow-sm hover:shadow transition-shadow"
+                    disabled={submitting}
                   >
-                    <Link href="/tasks">Sign in</Link>
+                    {submitting ? "Signing in..." : "Sign in"}
                   </Button>
 
                   <div className="relative py-2">
@@ -183,9 +205,7 @@ export default function Home() {
                       <span className="w-full border-t border-border" />
                     </div>
                     <div className="relative flex justify-center text-xs">
-                      <span className="bg-card px-2 text-muted-foreground">
-                        or
-                      </span>
+                      <span className="bg-card px-2 text-muted-foreground">or</span>
                     </div>
                   </div>
 
